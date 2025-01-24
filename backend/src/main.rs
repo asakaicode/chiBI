@@ -1,15 +1,17 @@
 use std::io::Result;
 
 use actix_cors::Cors;
-use actix_web::{guard, web, App, HttpServer};
+use actix_web::{guard, web, App, HttpRequest, HttpServer};
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use log::info;
 
 mod utils;
-use utils::graphql_schema::{create_schema, AppSchema};
+use utils::{graphql_context::GraphQLContext, graphql_schema::{create_schema, AppSchema}};
 
-async fn graphql_handler(schema: web::Data<AppSchema>, req: GraphQLRequest) -> GraphQLResponse {
-    schema.execute(req.into_inner()).await.into()
+async fn graphql_handler(schema: web::Data<AppSchema>, req: GraphQLRequest, http_req: HttpRequest) -> GraphQLResponse {
+    let user_id = http_req.headers().get("user-id").unwrap().to_str().unwrap().to_string();
+    let context = GraphQLContext::new(user_id);
+    schema.execute(req.into_inner().data(context)).await.into()
 }
 
 #[actix_web::main]
