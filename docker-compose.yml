@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/usr/src/app
+    depends_on:
+      - backend
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/code
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/code/target
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0.41
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: chiBI_db
+      MYSQL_USER: chiBI_user
+      MYSQL_PASSWORD: chiBI_password
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
+  cargo-cache:
+  target-cache:
