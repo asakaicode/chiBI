@@ -19,9 +19,11 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "8080:8080"
     volumes:
-      - ./backend:/usr/src/app
+      - ./backend:/code
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/code/target
     depends_on:
       - mysql
 
@@ -33,10 +35,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: chiBI_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
+      MYSQL_USER: chiBI_user
+      MYSQL_PASSWORD: chiBI_password
     volumes:
-      - ./db-data:/var/lib/mysql
+      - db-data:/var/lib/mysql
 
 volumes:
   db-data:
+  cargo-cache:
+  target-cache:
