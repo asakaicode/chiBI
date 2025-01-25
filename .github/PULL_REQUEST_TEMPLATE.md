@@ -4,7 +4,7 @@
 
 ## ✅ Check list
 
-- [] xxx
+- [ ] xxx
 
 ## ℹ️ Additional Information
 
